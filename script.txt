@@ -1,0 +1,17 @@
+又见：项目梳理.md
+
+### 硬件问题
+* 可以执行g_mass_storage，脚本如下
+```
+dd if=/dev/zero of=my_disk.img bs=1M count=20
+mkdir -p /mnt/my_disk
+mount -o loop my_disk.img  /mnt/my_disk
+losetup /dev/loop0 my_disk.img
+mke2fs /dev/loop0
+mount /dev/loop0 /mnt/my_disk
+modprobe g_mass_storage.ko file=/dev/loop0 stall=0 removable=1
+echo "peripheral" > /sys/devices/platform/soc/4100000.usb/musb-hdrc.2.auto/mode
+```
+* 查看日志，获取挂载位置信息，然后手动挂载到文件夹
+* 如果没有自动创建/dev/sda，那就自己`mknod /dev/sda b 8 0`一个，一样可以用
+* 用mass storage拷贝速度大约20M/s
